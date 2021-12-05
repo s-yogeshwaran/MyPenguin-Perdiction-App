@@ -54,3 +54,65 @@ log_reg_score = log_reg.score(X_train, y_train)
 rf_clf = RandomForestClassifier(n_jobs = -1)
 rf_clf.fit(X_train, y_train)
 rf_clf_score = rf_clf.score(X_train, y_train)
+
+
+# Create a function that accepts 'model', island', 'bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g' and 'sex' as inputs and returns the species name.
+@st.cache()
+def prediction(model, island, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g, sex):
+
+  species = model.predict([[island, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g, sex]])
+  
+  species = species[0]
+
+  if species == 0:
+    return "Adelie"
+  elif species == 1:
+    return "Chinstrap"
+  elif species == 2:
+    return "Gentoo"
+
+
+ # Design the App
+st.sidebar.title("Penguin Species Perdiction App")
+
+bill_len = st.sidebar.slider("Bill length", float(df['bill_length_mm'].min()), float(df['bill_length_mm'].max()))
+
+bill_dep = st.sidebar.slider("Bill Depth", float(df['bill_depth_mm'].min()), float(df['bill_depth_mm'].max()))
+
+flip_len = st.sidebar.slider("Flipper Length", float(df['flipper_length_mm'].min()), float(df['flipper_length_mm'].max()))
+
+body_mass = st.sidebar.slider("Body Mass", float(df['body_mass_g'].min()), float(df['body_mass_g'].max()))
+
+sex = st.sidebar.selectbox('Sex', ('Male', 'Female'))
+
+if sex == 'Male':
+  sex = 0
+elif sex == 'Female':
+  sex = 1
+
+island = st.sidebar.selectbox('Island', ('Torgersen', 'Biscoe', 'Dream'))
+
+if island == 'Biscoe':
+  island = 0
+elif island == 'Dream':
+  island = 1
+elif island == 'Torgersen':
+  island = 2
+
+classifier = st.sidebar.selectbox('Classifier', ('Support Vector Machine', 'Logistic Regression', 'Random Forest Classifier'))
+
+if st.sidebar.button("Predict"):
+  if classifier == 'Support Vector Machine':
+    species_type = prediction(svc_model, bill_len, bill_dep, flip_len, body_mass, island, sex)
+    score = svc_model.score(X_train, y_train)
+  
+  elif classifier =='Logistic Regression':
+    species_type = prediction(log_reg, bill_len, bill_dep, flip_len, body_mass, island, sex)
+    score = log_reg.score(X_train, y_train)
+
+  else:
+    species_type = prediction(rf_clf, bill_len, bill_dep, flip_len, body_mass, island, sex)
+    score = rf_clf.score(X_train, y_train)
+  
+  st.write("Species predicted: ", species_type)
+  st.write("Accuracy score of this model is:", score)
