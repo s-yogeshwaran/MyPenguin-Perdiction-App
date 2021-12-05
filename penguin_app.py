@@ -90,7 +90,7 @@ if sex == 'Male':
 elif sex == 'Female':
   sex = 1
 
-island = st.sidebar.selectbox('Island', ('Torgersen', 'Biscoe', 'Dream'))
+island = st.sidebar.selectbox('Island', ('Biscoe', 'Dream', 'Torgersen'))
 
 if island == 'Biscoe':
   island = 0
